@@ -1,7 +1,7 @@
 const { ErrorCreate } = require("../Errors/createError");
 const { ClientModel } = require("../Model/clientDetail");
 const { ClientFinanceModel } = require("../Model/clientFinanceDetail");
-const { ClientBankModel } = require("../model/clientBankDetail");
+const { ClientBankModel } = require("../Model/clientBankDetail");
 const pandVerification = async (req, res, next) => {
   const client = req.user;
   const { pan_details, aadhaar } = req.body;
