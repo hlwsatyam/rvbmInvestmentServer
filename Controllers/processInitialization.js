@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const { ErrorCreate } = require("../Errors/createError");
-const { ClientModel } = require("../Model/ClientDetail");
+const { ErrorCreate } = require("../Errors/createError.js");
+const { ClientModel } = require("../Model/clientDetail.js");
 const createUser = async (req, res, next) => {
   const { phone, email, postal } = req.body;
   console.log(phone, email, postal);
