@@ -32,4 +32,12 @@ const createUser = async (req, res, next) => {
   }
 };
 
-module.exports = { createUser };
+const loginAdmin = async (req, res, next) => {
+  const { email, password } = req.body;
+  if (email == "info@rvbmuniverse" && password == "12345") {
+    return res.status(200).json({ isAdminLogged: true });
+  }
+  return res.status(404).json({ isAdminLogged: false });
+};
+
+module.exports = { createUser, loginAdmin };

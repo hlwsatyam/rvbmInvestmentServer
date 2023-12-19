@@ -86,11 +86,11 @@ const financeVerification = async (req, res, next) => {
 
   const { initialAmount, maturity_time, CAGR, returnedAmount, totalEarnings } =
     req.body;
-  
-  try { 
+
+  try {
     const ClientFinance = new ClientFinanceModel({
       initialAmount,
-      maturity_time,  
+      maturity_time,
       CAGR,
       returnedAmount,
       totalEarnings,
@@ -101,7 +101,7 @@ const financeVerification = async (req, res, next) => {
       client.id,
       {
         $set: {
-          step: 4,
+          step: 0,
         },
         $push: {
           finance_details: finace,
