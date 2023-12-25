@@ -16,13 +16,17 @@ const clientFinanceSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    maturity_time:{
+    maturity_time: {
       type: Number,
       required: true,
     },
     totalEarnings: {
       type: Number,
       required: true,
+    },
+    payment_success: {
+      type: Boolean,
+      default: false,
     },
     client_details: {
       type: mongoose.Types.ObjectId,

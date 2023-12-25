@@ -12,6 +12,7 @@ const clientSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     phone_number: {
       type: String,
@@ -19,34 +20,46 @@ const clientSchema = new mongoose.Schema(
       required: true,
     },
     postal: {
-      type: String,
+      type: Number,
       required: true,
     },
     current_address: {
       type: String,
-    
     },
     permanent_address: {
       type: String,
     },
-    adhar_linked: {
+
+    is_KYC_completed: {
       type: Boolean,
+      default: false,
     },
     gender: {
       type: String,
     },
-    aadhaar: {
+    fd_number: {
       type: String,
       unique: true,
     },
-    pan_details: {
-      type: {},
+    aadhaar: {
+      type: Number,
+      unique: true,
+    },
+
+    pan_number: {
+      type: String,
+      unique: true,
+    },
+    aadhaar_details: {
+      type: mongoose.Schema.Types.Mixed,
     },
     banks_details: {
       type: mongoose.Types.ObjectId,
       ref: "clientbank",
     },
-    finance_details: [{ type: mongoose.Schema.Types.ObjectId, ref: "clientfinance" }],
+    finance_details: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "clientfinance" },
+    ],
   },
   { timestamps: true }
 );

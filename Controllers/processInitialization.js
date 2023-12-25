@@ -4,10 +4,11 @@ const { ClientModel } = require("../Model/clientDetail.js");
 const createUser = async (req, res, next) => {
   const { phone, email, postal } = req.body;
   console.log(phone, email, postal);
+
   let existuser;
   try {
     existuser = await ClientModel.findOne({
-      $or: [{ phone_number: phone }, { email: email }],
+      $or: [{ phone_number: phone }],
     });
 
     if (existuser) {

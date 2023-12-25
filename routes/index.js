@@ -6,24 +6,44 @@ const {
 const { authenticateMiddleware } = require("../Controllers/authentication");
 const {
   bankVerification,
-  pandVerification,
+  aadhaarVerification,
   personalVerification,
   financeVerification,
   userDetails,
+  getAadhaarFromUser,
+  aadhaarKycInitialization,
+  getRelodedCaptcha,
 } = require("../Controllers/Process");
 const { fetchingDataFromAdmin } = require("../Controllers/admin");
 
 const router = express.Router();
 router.post("/admininialization", loginAdmin);
 router.post("/getuserdatafromAdminReq", fetchingDataFromAdmin);
+
 router.post("/inialization", createUser);
-router.post("/panverification", authenticateMiddleware, pandVerification);
+
+router.post(
+  "/aadhaarkycinitialization",
+  authenticateMiddleware,
+  aadhaarKycInitialization
+);
+router.post(
+  "/getaadhaarnumberforkyc",
+  authenticateMiddleware,
+  getAadhaarFromUser
+);
+router.post("/reloadkyccaptcha", authenticateMiddleware, getRelodedCaptcha);
+
+router.post(
+  "/aadhaarverification",
+  authenticateMiddleware,
+  aadhaarVerification
+);
 router.post(
   "/personalverification",
   authenticateMiddleware,
   personalVerification
 );
-router.post("/bankverification", authenticateMiddleware, bankVerification);
 router.post("/bankverification", authenticateMiddleware, bankVerification);
 router.post(
   "/financeverification",
