@@ -39,7 +39,7 @@ const clientSchema = new mongoose.Schema(
     },
     fd_number: {
       type: String,
-    
+      default: null,
     },
     aadhaar: {
       type: Number,
