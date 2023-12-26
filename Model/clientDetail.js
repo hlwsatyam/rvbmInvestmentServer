@@ -93,7 +93,7 @@ const clientSchema = new mongoose.Schema(
       type: String,
       index:true,
       unique:true,
-      sparse:true
+      sparse:true,
       required: true,
     },
     postal: {
