@@ -113,19 +113,25 @@ const clientSchema = new mongoose.Schema(
     },
     fd_number: {
       type: String,
+      index: true,
       unique: true,
-      default: null,
+      sparse: true,
+      required: true,
     },
     aadhaar: {
       type: Number,
+      index: true,
       unique: true,
-      default: null,
+      sparse: true,
+      required: true,
     },
 
     pan_number: {
       type: String,
+      index: true,
       unique: true,
-      default: null,
+      sparse: true,
+      required: true,
     },
     aadhaar_details: {
       type: mongoose.Schema.Types.Mixed,
