@@ -68,8 +68,6 @@
 
 // module.exports = { ClientModel };
 
-
-
 const mongoose = require("mongoose");
 
 const clientSchema = new mongoose.Schema(
@@ -84,16 +82,15 @@ const clientSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      index:true,
-      unique:true,
-      sparse:true
-
+      index: true,
+      unique: true,
+      sparse: true,
     },
     phone_number: {
       type: String,
-      index:true,
-      unique:true,
-      sparse:true,
+      index: true,
+      unique: true,
+      sparse: true,
       required: true,
     },
     postal: {
@@ -116,23 +113,19 @@ const clientSchema = new mongoose.Schema(
     },
     fd_number: {
       type: String,
-      index:true,
-      unique:true,
-      sparse:true
+      unique: true,
+      default: null,
     },
     aadhaar: {
       type: Number,
-     
-      index:true,
-      unique:true,
-      sparse:true
+      unique: true,
+      default: null,
     },
 
     pan_number: {
       type: String,
-      index:true,
-      unique:true,
-      sparse:true
+      unique: true,
+      default: null,
     },
     aadhaar_details: {
       type: mongoose.Schema.Types.Mixed,
