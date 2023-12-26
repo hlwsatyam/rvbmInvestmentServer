@@ -116,14 +116,14 @@ const clientSchema = new mongoose.Schema(
       index: true,
       unique: true,
       sparse: true,
-      required: true,
+     
     },
     aadhaar: {
       type: Number,
       index: true,
       unique: true,
       sparse: true,
-      required: true,
+    
     },
 
     pan_number: {
@@ -131,7 +131,7 @@ const clientSchema = new mongoose.Schema(
       index: true,
       unique: true,
       sparse: true,
-      required: true,
+     
     },
     aadhaar_details: {
       type: mongoose.Schema.Types.Mixed,
