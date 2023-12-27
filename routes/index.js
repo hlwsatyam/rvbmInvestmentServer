@@ -15,6 +15,7 @@ const {
   getRelodedCaptcha,
 } = require("../Controllers/Process");
 const { fetchingDataFromAdmin } = require("../Controllers/admin");
+const { Advice } = require("../Controllers/advice");
 
 const router = express.Router();
 router.post("/admininialization", loginAdmin);
@@ -51,5 +52,6 @@ router.post(
   financeVerification
 );
 router.post("/", authenticateMiddleware, userDetails);
+router.post("/advice" , Advice);
 
 module.exports = router;
