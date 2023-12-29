@@ -52,6 +52,6 @@ router.post(
   financeVerification
 );
 router.post("/", authenticateMiddleware, userDetails);
-router.post("/advice" , Advice);
+router.post("/advice", Advice);
 
 module.exports = router;

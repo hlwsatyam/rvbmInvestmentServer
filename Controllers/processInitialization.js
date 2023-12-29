@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
 const { ErrorCreate } = require("../Errors/createError.js");
 const { ClientModel } = require("../Model/clientDetail.js");
+const {
+  formatPhoneNumber,
+} = require("../SupportiveJsFunction/ControllersSupport.js");
 const createUser = async (req, res, next) => {
-  const { phone, email, postal } = req.body;
+  let { phone, email, postal } = req.body;
   console.log(phone, email, postal);
-
+  phone = formatPhoneNumber(phone);
   let existuser;
   try {
     existuser = await ClientModel.findOne({

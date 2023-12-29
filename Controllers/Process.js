@@ -3,39 +3,48 @@ const { ClientModel } = require("../Model/clientDetail");
 const { ClientFinanceModel } = require("../Model/clientFinanceDetail");
 const { ClientBankModel } = require("../Model/clientBankDetail");
 const crypto = require("crypto");
+const {
+  generateUniqueCode,
+  convertToUpperCaseWithNumbers,
+  headers,
+} = require("../SupportiveJsFunction/ControllersSupport");
 const aadhaarVerification = async (req, res, next) => {
   const client = req.user;
   const { pan_number, aadhaar, otp, session_id } = req.body;
   console.log(req.body);
+  let existUser;
+
+  try {
+    existUser = await ClientModel.findOne({
+      $or: [{ aadhaar: aadhaar }, { pan_number: pan_number }],
+    });
+
+    if (existUser) {
+      if (existUser._id == client.id) {
+        await ClientModel.findOneAndUpdate(
+          { aadhaar, pan_number },
+          {
+            step: 1,
+          }
+        );
+        return res
+          .status(200)
+          .json({ message: "already KYC done!", code: 200 });
+      }
+      if (existUser._id !== client.id) {
+        return res
+          .status(400)
+          .json({ message: "not authrized preson", code: 400 });
+      }
+    }
+  } catch (error) {
+    console.log("error in first tyry", error);
+    next(ErrorCreate(error.statusCode, error.message));
+  }
+
   try {
     const consent = process.env.CONSENT;
     const purpose = process.env.PURPOSE;
-    const headers = {
-      "client-id": process.env.CLIENT_ID,
-      "x-api-key": process.env.X_API_KEY,
-    };
-    function convertToUpperCaseWithNumbers(pan_number) {
-      let result = "";
-
-      for (let i = 0; i < pan_number.length; i++) {
-        const char = pan_number[i];
-        if (/[a-z]/.test(char)) {
-          result += char.toUpperCase();
-        } else {
-          result += char;
-        }
-      }
-
-      return result;
-    }
-    function generateUniqueCode(aadhaarNumber, uniqueCode) {
-      const inputString = `${aadhaarNumber}-${uniqueCode}`;
-      const hash = crypto
-        .createHash("sha256")
-        .update(inputString)
-        .digest("hex");
-      return hash.substr(0, 20);
-    }
 
     await fetch(
       `https://production.deepvue.tech/v1/ekyc/aadhaar/verify-otp?otp=${otp}&session_id=${session_id}&consent=${consent}&purpose=${purpose}`,
@@ -48,11 +57,14 @@ const aadhaarVerification = async (req, res, next) => {
       .then(async (data) => {
         if (data.code == 200) {
           try {
+
+            
+
             const user = await ClientModel.findByIdAndUpdate(
               client.id,
               {
                 pan_number: convertToUpperCaseWithNumbers(pan_number),
-                fd_number: generateUniqueCode(aadhaar, process.env.FD_CODE),
+                customer_id: generateUniqueCode(aadhaar, process.env.FD_CODE),
                 aadhaar,
                 is_KYC_completed: true,
                 step: 1,
@@ -138,11 +150,14 @@ const financeVerification = async (req, res, next) => {
     req.body;
 
   try {
+    const numberOfClientFinances =
+      await ClientFinanceModel.find().countDocuments();
     const ClientFinance = new ClientFinanceModel({
       initialAmount,
       maturity_time,
       CAGR,
       returnedAmount,
+      fd_number: numberOfClientFinances + 1,
       totalEarnings,
       client_details: client.id,
     });
@@ -161,7 +176,6 @@ const financeVerification = async (req, res, next) => {
     );
     return res.status(200).send(user);
   } catch (error) {
-    console.log(error);
     next(ErrorCreate(error.statusCode, error.message));
   }
 };
@@ -176,6 +190,7 @@ const userDetails = async (req, res, next) => {
       })
       .populate("banks_details")
       .exec();
+
     return res.status(200).send(user);
   } catch (error) {
     next(ErrorCreate(error.statusCode, error.message));

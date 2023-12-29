@@ -24,6 +24,13 @@ const clientFinanceSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    maturity_initialize_time: {
+      type: Date,
+      default: Date.now,
+    },
+    maturity_start_date: {
+      type: String,
+    },
     payment_success: {
       type: Boolean,
       default: false,
@@ -32,6 +39,9 @@ const clientFinanceSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "client",
       required: true,
+    },
+    fd_number: {
+      type: Number,
     },
   },
   { timestamps: true }
