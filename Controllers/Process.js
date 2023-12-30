@@ -3,6 +3,7 @@ const { ClientModel } = require("../Model/clientDetail");
 const { ClientFinanceModel } = require("../Model/clientFinanceDetail");
 const { ClientBankModel } = require("../Model/clientBankDetail");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const {
   generateUniqueCode,
   convertToUpperCaseWithNumbers,
@@ -56,24 +57,61 @@ const aadhaarVerification = async (req, res, next) => {
       .then((data) => data.json())
       .then(async (data) => {
         if (data.code == 200) {
+          let checkUser;
+
           try {
+            checkUser = await ClientModel.findOne({ aadhaar, pan_number });
+            if (checkUser) {
+              if (!checkUser.is_KYC_completed) {
+                const user = await ClientModel.findByIdAndUpdate(
+                  client.id,
+                  {
+                    pan_number: convertToUpperCaseWithNumbers(pan_number),
+                    customer_id: generateUniqueCode(
+                      aadhaar,
+                      process.env.FD_CODE
+                    ),
+                    aadhaar,
+                    is_KYC_completed: true,
+                    step: 1,
+                    aadhaar_details: data.data,
+                  },
+                  { new: true }
+                );
+                return res
+                  .status(200)
+                  .json({ message: "KYC done!", code: 200 });
+              }
+            } else {
+              let parentUser = await ClientModel.findById(client.id);
 
-            
-
-            const user = await ClientModel.findByIdAndUpdate(
-              client.id,
-              {
+              const ChildUser = new ClientModel({
+                full_name: data.data.name,
+                email: data.data.email,
+                postal: parseInt(data.data.address.pin, 10),
                 pan_number: convertToUpperCaseWithNumbers(pan_number),
-                customer_id: generateUniqueCode(aadhaar, process.env.FD_CODE),
+                client_id: generateUniqueCode(aadhaar, process.env.FD_CODE, 0),
                 aadhaar,
                 is_KYC_completed: true,
                 step: 1,
                 aadhaar_details: data.data,
-              },
-              { new: true }
-            );
-            return res.status(200).json({ message: "KYC done!", code: 200 });
+              });
+              const newuser = await ChildUser.save();
+              parentUser.familyfd_details.push(newuser);
+              await parentUser.save();
+              const token = jwt.sign(
+                { id: newuser._id },
+                process.env.SECRET_KEY,
+                {
+                  expiresIn: "1h",
+                }
+              );
+              return res
+                .status(200)
+                .json({ message: "KYC done!", code: 200, token });
+            }
           } catch (error) {
+            console.log(" error from inner :", error);
             next(ErrorCreate(error.statusCode, error.message));
           }
         } else {
@@ -81,6 +119,7 @@ const aadhaarVerification = async (req, res, next) => {
         }
       });
   } catch (error) {
+    console.log(" error from top :", error);
     next(ErrorCreate(error.statusCode, error.message));
   }
 };

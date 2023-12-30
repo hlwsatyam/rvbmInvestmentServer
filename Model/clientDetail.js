@@ -12,20 +12,15 @@ const clientSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      index: true,
-      unique: true,
-      sparse: true,
+   
     },
     phone_number: {
       type: String,
-      index: true,
-      unique: true,
-      sparse: true,
-      required: true,
+    
     },
     postal: {
       type: Number,
-      required: true,
+     
     },
     current_address: {
       type: String,
